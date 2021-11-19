@@ -5,6 +5,9 @@ using PlayFab;
 using PlayFab.ClientModels;
 using UnityEngine.UI;
 
+//PlayerFabを用いたCRUD処理
+//YouTube (https://www.youtube.com/watch?v=e2RXDso6fWU&t=13s)を参考にして作成
+
 public class PlayfabLogin2 : MonoBehaviour
 {
 
@@ -33,6 +36,7 @@ public class PlayfabLogin2 : MonoBehaviour
 //ログイン成功時の処理
     void OnSuccess(LoginResult result){
         Debug.Log("Successful login/account create!");
+        GetITitleData();
     }
 
 //ログイン失敗時の処理
@@ -112,7 +116,21 @@ public class PlayfabLogin2 : MonoBehaviour
     }
 
 
-    
+    ///タイトルデータ(DB)の参照
+    ///https://docs.microsoft.com/ja-jp/gaming/playfab/features/data/titledata/quickstart
+    ///Set title Data で登録もできるようだが、静的なデータの利用が目的らしい。
+    void GetITitleData(){
+        PlayFabClientAPI.GetTitleData(new GetTitleDataRequest(), OnTitleDataReceived, OnError);
+    }
+
+    void OnTitleDataReceived(GetTitleDataResult result){
+        if(result.Data == null || result.Data.ContainsKey("Message") == false || result.Data.ContainsKey("Number")==false){
+            Debug.Log("No Message!");
+            return;
+        }
+
+        Debug.Log(result.Data["Message"]);
+    }
 
     public void ScoreButton(){
         SendLeaderboard(score);
